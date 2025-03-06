@@ -19,12 +19,12 @@ class _BoardTileState extends State<BoardTile> {
     return FlipCard(
       direction: FlipDirection.VERTICAL,
       front: Container(
-        width: 50, 
-        height: 50,
+        width: 40,
+        height:40,
         decoration: BoxDecoration(
           border: Border.all(
             color: Colors.white,
-            width: 5.0, // Thickness of the border
+            width: 2.0,
           ),
           borderRadius: BorderRadius.circular(10),
         ),
@@ -32,23 +32,23 @@ class _BoardTileState extends State<BoardTile> {
           child: Text(
             '', // Front side is empty
             style: TextStyle(
-              fontSize: 44,
-              color: const Color.fromARGB(255, 240, 233, 233), // Change color to suit your design
+              fontSize: 40,
+              color: const Color.fromARGB(255, 240, 233, 233),
               decoration: TextDecoration.none
             ),
           ),
         ),
       ),
       back: Container(
-        width: 50, 
-        height: 50, 
+        width: 40,
+        height: 40,
         decoration: BoxDecoration(
             color: widget.letter == 'A' ? correctColor 
             : widget.letter == 'B' ? inWordColor 
             : notInWordColor,
           border: Border.all(
             color: Colors.white,
-            width: 5.0, 
+            width: 2.0,
           ),
           borderRadius: BorderRadius.circular(10)
         ),
@@ -56,7 +56,7 @@ class _BoardTileState extends State<BoardTile> {
           child: Text(
             widget.letter,
             style: TextStyle(
-              fontSize: 44,
+              fontSize: 40,
               color: const Color.fromARGB(255, 240, 233, 233),
               decoration: TextDecoration.none
             ),
