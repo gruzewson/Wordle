@@ -15,7 +15,7 @@ class Board extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: word.letters.map((letter) {
             return BoardTile(
-              letter: letter.val,
+              letter: letter,
             );
           }).toList(),
         );

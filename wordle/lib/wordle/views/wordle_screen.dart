@@ -36,10 +36,21 @@ class _WordleScreenState extends State<WordleScreen> {
         }
         else{
           //TODO: flip tiles
-           final currentWordStr = _currentWord.letters.map((l) => l.getVal).join();
-           print("Submitted word: $currentWordStr");
-           _currentWordIndex++;
-           _currentLetterIndex = 0;
+          for(int i = 0; i < WORD_SIZE; i++){
+            if(_currentWord.letters[i].val == word[i]){
+              _currentWord.letters[i] = Letter(val: _currentWord.letters[i].val, status: LetterStatus.correct);
+            }
+            else if(word.contains(_currentWord.letters[i].val)){
+              _currentWord.letters[i] = Letter(val: _currentWord.letters[i].val, status: LetterStatus.inWord);
+            }
+            else{
+              _currentWord.letters[i] = Letter(val: _currentWord.letters[i].val, status: LetterStatus.notInWord);
+            }
+          }
+          final currentWordStr = _currentWord.letters.map((l) => l.getVal).join();
+          _checkWin(currentWordStr);
+          _currentWordIndex++;
+          _currentLetterIndex = 0;
         }
       }
       else if(letter.val == 'DELETE'){
@@ -65,30 +76,39 @@ class _WordleScreenState extends State<WordleScreen> {
   @override
 Widget build(BuildContext context) {
   return Scaffold(
-    appBar: AppBar(
-      centerTitle: true,
-      elevation: 0,
-      title: const Text(
-        'WORDLE',
-        style: TextStyle(
-          fontSize: 40,
-          fontWeight: FontWeight.bold,
-          letterSpacing: 5,
-        )
-      ),
-    ),
+    // appBar: AppBar(
+    //   centerTitle: true,
+    //   elevation: 0,
+    //   title: const Text(
+    //     'WORDLE',
+    //     style: TextStyle(
+    //       fontSize: 40,
+    //       fontWeight: FontWeight.bold,
+    //       letterSpacing: 5,
+    //     )
+    //   ),
+    // ),
     body: Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
         children: [
           Board(board: _board),
-          const SizedBox(height: 20),
+          const SizedBox(height: 100),
           Keyboard(onLetterPressed: _onLetterPressed),
         ],
       ),
     ),
   );
+}
+
+void _checkWin(String currentWordStr) {
+  if(currentWordStr == word){
+    print("You win!");
+  }
+  else if(_currentWordIndex == 5){
+    print("You lose!");
+  }
+
 }
 
 }

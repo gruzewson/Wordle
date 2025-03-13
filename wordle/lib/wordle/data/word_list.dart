@@ -1,5 +1,5 @@
 const List<String> wordList = [
-  'apple',
+  'APPLE',
   ];
 //   'brave',
 //   'crane',
