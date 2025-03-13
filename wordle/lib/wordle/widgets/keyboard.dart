@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:wordle/wordle/models/letter_model.dart';
 
 const _qwerty = [
-  ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
   ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'],
   ['Z', 'X', 'C', 'V', 'B', 'N', 'M'],
   ['DELETE', 'ENTER']
 ];
 
 class Keyboard extends StatelessWidget {
-  const Keyboard({super.key});
+  final Function(Letter) onLetterPressed;
+
+  const Keyboard({super.key, required this.onLetterPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +22,7 @@ class Keyboard extends StatelessWidget {
           children: row.map((letter) {
             return _KeyboardButton(
               letter: letter,
-              onPressed: () {},
+              onPressed: () => onLetterPressed(Letter(val: letter)),
               backgroundColor: Colors.grey,
             );
           }).toList(),
@@ -56,7 +58,7 @@ class _KeyboardButton extends StatelessWidget {
       height: height,
       decoration: BoxDecoration(
         color: backgroundColor,
-        borderRadius: BorderRadius.circular(8.0), // Smooth circular edges
+        borderRadius: BorderRadius.circular(8.0),
       ),
       child: TextButton(
         onPressed: onPressed,

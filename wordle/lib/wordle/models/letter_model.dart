@@ -10,6 +10,9 @@ class Letter extends Equatable {
 
   const Letter({this.status = LetterStatus.initial, required this.val});
 
+  // Add an isEmpty getter
+  bool get isEmpty => val.isEmpty;
+
   LetterStatus get getStatus => status;
   String get getVal => val;
 

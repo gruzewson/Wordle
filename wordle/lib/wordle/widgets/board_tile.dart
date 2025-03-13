@@ -19,8 +19,8 @@ class _BoardTileState extends State<BoardTile> {
     return FlipCard(
       direction: FlipDirection.VERTICAL,
       front: Container(
-        width: 40,
-        height:40,
+        width: 70,
+        height:70,
         decoration: BoxDecoration(
           border: Border.all(
             color: Colors.white,
@@ -30,7 +30,7 @@ class _BoardTileState extends State<BoardTile> {
         ),
         child: Center(
           child: Text(
-            '', // Front side is empty
+            widget.letter,
             style: TextStyle(
               fontSize: 40,
               color: const Color.fromARGB(255, 240, 233, 233),
@@ -40,8 +40,8 @@ class _BoardTileState extends State<BoardTile> {
         ),
       ),
       back: Container(
-        width: 40,
-        height: 40,
+        width: 70,
+        height: 70,
         decoration: BoxDecoration(
             color: widget.letter == 'A' ? correctColor 
             : widget.letter == 'B' ? inWordColor 
