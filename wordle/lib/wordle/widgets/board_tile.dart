@@ -34,13 +34,13 @@ class _BoardTileState extends State<BoardTile> {
         color: _getBackgroundColor(),
         border: Border.all(
           color: Colors.white,
-          width: 2.0,
+          width: 1.5,
         ),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Center(
         child: Text(
-          widget.letter.val.toUpperCase(),
+          widget.letter.val,
           style: const TextStyle(
             fontSize: 40,
             color: Color.fromARGB(255, 240, 233, 233),

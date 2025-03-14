@@ -9,7 +9,7 @@ class Board extends StatelessWidget {
     super.key, 
     required this.board,
     required this.flipCardKeys,
-    });
+  });
 
   final List<Word> board;
   final List<List<GlobalKey<FlipCardState>>> flipCardKeys;
@@ -25,23 +25,30 @@ class Board extends StatelessWidget {
           .map(
             (j, letter) => MapEntry(
               j, 
-              FlipCard(
-                key: flipCardKeys[i][j],
-                flipOnTouch: false,
-                direction: FlipDirection.VERTICAL,
-                front: BoardTile(
-                  letter: Letter(
-                    val: letter.val,
-                    status: LetterStatus.initial,
-                  )
+              SizedBox(
+                width: 70, // Adjust the width as needed
+                height: 70, // Adjust the height as needed
+                child: Padding(
+                  padding: const EdgeInsets.all(4.0), // Add space between tiles
+                  child: FlipCard(
+                    key: flipCardKeys[i][j],
+                    flipOnTouch: false,
+                    direction: FlipDirection.VERTICAL,
+                    front: BoardTile(
+                      letter: Letter(
+                        val: letter.val,
+                        status: LetterStatus.initial,
+                      ),
+                    ),
+                    back: BoardTile(letter: letter),
+                  ),
                 ),
-                back: BoardTile(letter: letter),
-            )),
+              ),
+            ),
           )
           .values
           .toList(),
-          ),
-        ),
+        )),
       )
       .values
       .toList(),

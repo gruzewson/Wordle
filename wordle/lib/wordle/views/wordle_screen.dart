@@ -9,6 +9,12 @@ import 'dart:math';
 
 const WORD_SIZE = 5;
 
+enum GameState {
+  playing,
+  win,
+  lose,
+}
+
 class WordleScreen extends StatefulWidget {
   const WordleScreen({super.key});
 
@@ -31,22 +37,21 @@ class _WordleScreenState extends State<WordleScreen> {
 
   int _currentWordIndex = 0;
   int _currentLetterIndex = 0;
+  GameState _gameState = GameState.playing;
+  final Set<Letter> _pressedLetters = {};
 
   get _currentWord => _board[_currentWordIndex];
 
-  void _onLetterPressed(Letter letter) {
+  void _onPressed(Letter letter) {
+    if(_gameState != GameState.playing){
+      return;
+    }
     setState(() {
       if(letter.val == 'ENTER'){
         _onEnterPressed();
       }
       else if(letter.val == 'DELETE'){
-        if(_currentLetterIndex > 0){
-          _currentWord.letters[_currentLetterIndex-1] = Letter.empty();
-          _currentLetterIndex--;
-        }
-        else{
-          _currentWord.letters[_currentLetterIndex] = Letter.empty();
-        }
+        _onDeletePressed();
       }
       else{
         if(_currentLetterIndex < WORD_SIZE){
@@ -57,20 +62,34 @@ class _WordleScreenState extends State<WordleScreen> {
     });
   }
 
+  void _onDeletePressed() {
+    if(_currentLetterIndex > 0){
+      _currentWord.letters[_currentLetterIndex-1] = Letter.empty();
+      _currentLetterIndex--;
+    }
+    else{
+      _currentWord.letters[_currentLetterIndex] = Letter.empty();
+    }
+  }
+
   Future<void> _onEnterPressed() async {
     if(_currentLetterIndex < WORD_SIZE){
-          print("too short");
+          print("too short"); // TODO show a snackbar
         }
         else{
           for(int i = 0; i < WORD_SIZE; i++){
             if(_currentWord.letters[i].val == solution[i]){
               _currentWord.letters[i] = Letter(val: _currentWord.letters[i].val, status: LetterStatus.correct);
+              _pressedLetters.removeWhere((element) => element.val == _currentWord.letters[i].val);
+              _pressedLetters.add(_currentWord.letters[i]);
             }
             else if(solution.contains(_currentWord.letters[i].val)){
               _currentWord.letters[i] = Letter(val: _currentWord.letters[i].val, status: LetterStatus.inWord);
+              _pressedLetters.add(_currentWord.letters[i]);
             }
             else{
               _currentWord.letters[i] = Letter(val: _currentWord.letters[i].val, status: LetterStatus.notInWord);
+              _pressedLetters.add(_currentWord.letters[i]);
             }
           }
           for(int i = 0; i < WORD_SIZE; i++){
@@ -86,7 +105,7 @@ class _WordleScreenState extends State<WordleScreen> {
   String solution = wordList[Random().nextInt(wordList.length)];
 
   
-  @override
+@override
 Widget build(BuildContext context) {
   return Scaffold(
     appBar: AppBar(
@@ -104,27 +123,99 @@ Widget build(BuildContext context) {
       ),
       ),
     ),
-    body: Center(
-      child: Column(
+    body: Stack(
+      alignment: Alignment.center,
+      children: [
+        Column(
+         mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            const SizedBox(height: 40),
+            Board(board: _board, flipCardKeys: _flipCardKeys),
+            const SizedBox(height: 40),
+            Keyboard(onLetterPressed: _onPressed, pressedLetters: _pressedLetters),
+          ],
+        ),
+
+        if (_gameState != GameState.playing)
+          Positioned(
+            top: 100,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              decoration: BoxDecoration(
+                color: _gameState == GameState.win 
+                  ? const Color.fromARGB(255, 2, 114, 6) 
+                  : const Color.fromARGB(255, 114, 2, 2),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Text(
+                _gameState == GameState.win 
+                  ? "You Win!" 
+                  : "You Lose!\nThe word was: $solution",
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 24,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+      ],
+    ),
+    bottomNavigationBar: BottomAppBar(
+      color: Colors.blueAccent,
+      height: 60,
+      child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Board(board: _board, flipCardKeys: _flipCardKeys),
-          const SizedBox(height: 50),
-          Keyboard(onLetterPressed: _onLetterPressed),
+          ElevatedButton(
+            onPressed: _restart,
+            child: const Text("Restart"),
+          ),
         ],
       ),
     ),
   );
 }
 
-void _checkWin(String currentWordStr) {
-  if(currentWordStr == solution){
-    print("You win!");
-  }
-  else if(_currentWordIndex == 5){
-    print("You lose!");
-  }
 
+void _checkWin(String currentWordStr) {
+  setState(() {
+    if (currentWordStr == solution) {
+      _gameState = GameState.win;
+    } else if (_currentWordIndex == 5) {
+      _gameState = GameState.lose;
+    }
+  });
 }
+
+void _restart(){
+  setState(() {
+    _board
+    ..clear()
+    ..addAll(
+     List.generate(
+      6, 
+      (_) => Word(
+        letters: List.generate(WORD_SIZE, (_) => Letter.empty()),
+      )
+     ),
+  );
+    _flipCardKeys
+    ..clear()
+    ..addAll(
+      List.generate(
+      6,
+      (_) => List.generate(WORD_SIZE, (_) => GlobalKey<FlipCardState>()),
+      ),
+  );
+    _currentWordIndex = 0;
+    _currentLetterIndex = 0;
+    _gameState = GameState.playing;
+    solution = wordList[Random().nextInt(wordList.length)];
+    _pressedLetters.clear();
+  });
+}
+
 
 }

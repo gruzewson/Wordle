@@ -10,10 +10,15 @@ const _qwerty = [
 
 class Keyboard extends StatelessWidget {
   final Function(Letter) onLetterPressed;
+  final Set<Letter> pressedLetters;
 
-  const Keyboard({super.key, required this.onLetterPressed});
+  const Keyboard({
+    super.key,
+    required this.onLetterPressed,
+    required this.pressedLetters,
+    });
 
-  @override
+    @override
   Widget build(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -21,10 +26,14 @@ class Keyboard extends StatelessWidget {
         return Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: row.map((letter) {
+            final isPressed = pressedLetters.any((element) => element.val == letter);
+            final color = isPressed
+                ? pressedLetters.firstWhere((element) => element.val == letter).backgroundColor
+                : const Color.fromARGB(255, 114, 113, 113);
             return _KeyboardButton(
               letter: letter,
               onPressed: () => onLetterPressed(Letter(val: letter)),
-              backgroundColor: Colors.grey,
+              backgroundColor: color,
             );
           }).toList(),
         );
@@ -37,16 +46,13 @@ class Keyboard extends StatelessWidget {
 
 class _KeyboardButton extends StatelessWidget {
   const _KeyboardButton({
-    super.key,
-    this.width = 40,
-    this.height = 50,
     required this.letter,
     required this.onPressed,
     required this.backgroundColor,
   });
 
-  final double width;
-  final double height;
+  final double width = 40;
+  final double height = 50;
   final String letter;
   final VoidCallback onPressed;
   final Color backgroundColor;
@@ -65,7 +71,10 @@ class _KeyboardButton extends StatelessWidget {
         onPressed: onPressed,
         child: Text(
             letter,
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(
+            color: const Color.fromARGB(255, 255, 255, 255),
+            fontWeight: FontWeight.bold
+          ),
         ),
       ),
     );
