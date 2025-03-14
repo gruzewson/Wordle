@@ -1,3 +1,4 @@
+import 'package:flip_card/flip_card.dart';
 import 'package:flutter/material.dart';
 import 'package:wordle/wordle/models/letter_model.dart';
 import 'package:wordle/wordle/models/word_model.dart';
@@ -23,6 +24,11 @@ class _WordleScreenState extends State<WordleScreen> {
     )
   );
 
+  final List<List<GlobalKey<FlipCardState>>> _flipCardKeys = List.generate(
+    6,
+    (_) => List.generate(WORD_SIZE, (_) => GlobalKey<FlipCardState>()),
+  );
+
   int _currentWordIndex = 0;
   int _currentLetterIndex = 0;
 
@@ -31,27 +37,7 @@ class _WordleScreenState extends State<WordleScreen> {
   void _onLetterPressed(Letter letter) {
     setState(() {
       if(letter.val == 'ENTER'){
-        if(_currentLetterIndex < WORD_SIZE){
-          print("too short");
-        }
-        else{
-          //TODO: flip tiles
-          for(int i = 0; i < WORD_SIZE; i++){
-            if(_currentWord.letters[i].val == word[i]){
-              _currentWord.letters[i] = Letter(val: _currentWord.letters[i].val, status: LetterStatus.correct);
-            }
-            else if(word.contains(_currentWord.letters[i].val)){
-              _currentWord.letters[i] = Letter(val: _currentWord.letters[i].val, status: LetterStatus.inWord);
-            }
-            else{
-              _currentWord.letters[i] = Letter(val: _currentWord.letters[i].val, status: LetterStatus.notInWord);
-            }
-          }
-          final currentWordStr = _currentWord.letters.map((l) => l.getVal).join();
-          _checkWin(currentWordStr);
-          _currentWordIndex++;
-          _currentLetterIndex = 0;
-        }
+        _onEnterPressed();
       }
       else if(letter.val == 'DELETE'){
         if(_currentLetterIndex > 0){
@@ -70,30 +56,60 @@ class _WordleScreenState extends State<WordleScreen> {
       }
     });
   }
-  String word = wordList[Random().nextInt(wordList.length)];
+
+  Future<void> _onEnterPressed() async {
+    if(_currentLetterIndex < WORD_SIZE){
+          print("too short");
+        }
+        else{
+          for(int i = 0; i < WORD_SIZE; i++){
+            if(_currentWord.letters[i].val == solution[i]){
+              _currentWord.letters[i] = Letter(val: _currentWord.letters[i].val, status: LetterStatus.correct);
+            }
+            else if(solution.contains(_currentWord.letters[i].val)){
+              _currentWord.letters[i] = Letter(val: _currentWord.letters[i].val, status: LetterStatus.inWord);
+            }
+            else{
+              _currentWord.letters[i] = Letter(val: _currentWord.letters[i].val, status: LetterStatus.notInWord);
+            }
+          }
+          for(int i = 0; i < WORD_SIZE; i++){
+              _flipCardKeys[_currentWordIndex][i].currentState!.toggleCard();
+              await Future.delayed(const Duration(milliseconds: 200));
+          }
+          final currentWordStr = _currentWord.letters.map((l) => l.getVal).join();
+          _checkWin(currentWordStr);
+          _currentWordIndex++;
+          _currentLetterIndex = 0;
+        }
+  }
+  String solution = wordList[Random().nextInt(wordList.length)];
 
   
   @override
 Widget build(BuildContext context) {
   return Scaffold(
-    // appBar: AppBar(
-    //   centerTitle: true,
-    //   elevation: 0,
-    //   title: const Text(
-    //     'WORDLE',
-    //     style: TextStyle(
-    //       fontSize: 40,
-    //       fontWeight: FontWeight.bold,
-    //       letterSpacing: 5,
-    //     )
-    //   ),
-    // ),
+    appBar: AppBar(
+      centerTitle: true,
+      toolbarHeight: 70,
+      titleSpacing: 20,
+      title: const Center(
+      child: Text(
+        'WORDLE',
+        style: TextStyle(
+        fontSize: 70,
+        fontWeight: FontWeight.bold,
+        letterSpacing: 5,
+        ),
+      ),
+      ),
+    ),
     body: Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Board(board: _board),
-          const SizedBox(height: 100),
+          Board(board: _board, flipCardKeys: _flipCardKeys),
+          const SizedBox(height: 50),
           Keyboard(onLetterPressed: _onLetterPressed),
         ],
       ),
@@ -102,7 +118,7 @@ Widget build(BuildContext context) {
 }
 
 void _checkWin(String currentWordStr) {
-  if(currentWordStr == word){
+  if(currentWordStr == solution){
     print("You win!");
   }
   else if(_currentWordIndex == 5){

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flip_card/flip_card.dart';
 import 'package:wordle/app/app_colors.dart';
 import 'package:wordle/wordle/models/letter_model.dart';
 
@@ -28,49 +27,24 @@ class _BoardTileState extends State<BoardTile> {
 
   @override
   Widget build(BuildContext context) {
-    return FlipCard(
-      direction: FlipDirection.VERTICAL,
-      front: Container(
-        width: 70,
-        height: 70,
-        decoration: BoxDecoration(
-          color: Colors.transparent,
-          border: Border.all(
-            color: Colors.white,
-            width: 2.0,
-          ),
-          borderRadius: BorderRadius.circular(10),
+    return Container(
+      width: 70,
+      height: 70,
+      decoration: BoxDecoration(
+        color: _getBackgroundColor(),
+        border: Border.all(
+          color: Colors.white,
+          width: 2.0,
         ),
-        child: Center(
-          child: Text(
-            widget.letter.val.toUpperCase(),
-            style: const TextStyle(
-              fontSize: 40,
-              color: Color.fromARGB(255, 240, 233, 233),
-              decoration: TextDecoration.none,
-            ),
-          ),
-        ),
+        borderRadius: BorderRadius.circular(10),
       ),
-      back: Container(
-        width: 70,
-        height: 70,
-        decoration: BoxDecoration(
-          color: _getBackgroundColor(),
-          border: Border.all(
-            color: Colors.white,
-            width: 2.0,
-          ),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Center(
-          child: Text(
-            widget.letter.val.toUpperCase(),
-            style: const TextStyle(
-              fontSize: 40,
-              color: Color.fromARGB(255, 240, 233, 233),
-              decoration: TextDecoration.none,
-            ),
+      child: Center(
+        child: Text(
+          widget.letter.val.toUpperCase(),
+          style: const TextStyle(
+            fontSize: 40,
+            color: Color.fromARGB(255, 240, 233, 233),
+            decoration: TextDecoration.none,
           ),
         ),
       ),
