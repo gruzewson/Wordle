@@ -104,17 +104,20 @@ class _WordleScreenState extends State<WordleScreen> {
 @override
 Widget build(BuildContext context) {
   return Scaffold(
-    appBar: AppBar(
+    appBar: PreferredSize(
+      preferredSize: const Size.fromHeight(100),
+      child: AppBar(
       centerTitle: true,
-      toolbarHeight: 70,
+      toolbarHeight: 200,
       titleSpacing: 20,
       title: const Center(
-      child: Text(
+        child: Text(
         'WORDLE',
         style: TextStyle(
-        fontSize: 70,
-        fontWeight: FontWeight.bold,
-        letterSpacing: 5,
+          fontSize: 70,
+          fontWeight: FontWeight.bold,
+          letterSpacing: 5,
+        ),
         ),
       ),
       ),
